@@ -5,6 +5,7 @@ import Form from "../Form/Form";
 import { fetchPhotosDate } from "../../services/photos";
 import PhotosGallery from "../PhotosGallery/PhotosGallery";
 import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 export default function App() {
   const [page, setPage] = useState(1);
@@ -34,6 +35,7 @@ export default function App() {
       <Toaster position="top-center" />
       <Form onSubmit={handleSearch} />
       {isLoading && <Loader />}
+      {isError && <ErrorMessage />}
       {isSuccess && <PhotosGallery onSelect={() => {}} photos={data.photos} />}
     </>
   );
