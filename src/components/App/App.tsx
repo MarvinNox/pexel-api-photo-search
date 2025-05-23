@@ -12,18 +12,22 @@ import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
+import type { Photos } from "../../types/photo";
+import Modal from "../Modal/Modal";
 
 export default function App() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
+  const [photo, setPhoto] = useState<Photos | null>(null);
   const { data, isError, isLoading, isSuccess } = useQuery({
     queryKey: ["photos", query, page],
     queryFn: () => fetchPhotosDate({ query, page }),
     enabled: query !== "",
     placeholderData: keepPreviousData,
   });
+
   const totalPages =
-    data?.total_results !== undefined && data?.per_page !== undefined
+    data?.total_results && data?.per_page
       ? Math.ceil(data.total_results / data.per_page)
       : 0;
 
@@ -37,18 +41,21 @@ export default function App() {
     setQuery(query);
     setPage(1);
   };
-
+  const closeModal = () => setPhoto(null);
+  const selectPhoto = (photo: Photos) => setPhoto(photo);
   return (
     <>
       <Toaster position="top-center" />
       <Form onSubmit={handleSearch} />
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-      {isSuccess && <PhotosGallery onSelect={() => {}} photos={data.photos} />}
+      {isSuccess && (
+        <PhotosGallery onSelect={selectPhoto} photos={data.photos} />
+      )}
       {isSuccess && totalPages > 1 && (
         <ReactPaginate
           pageCount={totalPages}
-          pageRangeDisplayed={5}
+          pageRangeDisplayed={4}
           marginPagesDisplayed={1}
           onPageChange={({ selected }) => setPage(selected + 1)}
           forcePage={page - 1}
@@ -59,6 +66,7 @@ export default function App() {
           previousLabel={<MdOutlineKeyboardArrowLeft size={24} />}
         />
       )}
+      {photo !== null && <Modal onClose={closeModal} photo={photo} />}
     </>
   );
 }
