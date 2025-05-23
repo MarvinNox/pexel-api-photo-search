@@ -33,7 +33,13 @@ export default function App() {
 
   useEffect(() => {
     if (isSuccess && data.total_results == 0) {
-      toast.error("No movies found for your request.");
+      toast.error("No movies found for your request.", {
+        style: {
+          borderRadius: "10px",
+          background: "#444",
+          color: "#fff",
+        },
+      });
     }
   }, [data, isSuccess]);
 
@@ -45,7 +51,7 @@ export default function App() {
   const selectPhoto = (photo: Photos) => setPhoto(photo);
   return (
     <>
-      <Toaster position="top-center" />
+      <Toaster position="top-right" />
       <Form onSubmit={handleSearch} />
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}

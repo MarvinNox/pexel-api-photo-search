@@ -10,7 +10,13 @@ export default function Form({ onSubmit }: FormSearchProps) {
   function handleSubmit(formData: FormData) {
     const query = formData.get("search") as string;
     if (!query) {
-      toast.error("Please enter a valid query.");
+      toast.error("Please enter a valid query.", {
+        style: {
+          borderRadius: "10px",
+          background: "#444",
+          color: "#fff",
+        },
+      });
       return;
     }
     onSubmit(query);
