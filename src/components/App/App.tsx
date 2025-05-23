@@ -6,6 +6,12 @@ import { fetchPhotosDate } from "../../services/photos";
 import PhotosGallery from "../PhotosGallery/PhotosGallery";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import ReactPaginate from "react-paginate";
+import css from "./App.module.css";
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from "react-icons/md";
 
 export default function App() {
   const [page, setPage] = useState(1);
@@ -16,8 +22,10 @@ export default function App() {
     enabled: query !== "",
     placeholderData: keepPreviousData,
   });
-
-  // const totalPages = data.total_results / data?.per_page;
+  const totalPages =
+    data?.total_results !== undefined && data?.per_page !== undefined
+      ? Math.ceil(data.total_results / data.per_page)
+      : 0;
 
   useEffect(() => {
     if (isSuccess && data.total_results == 0) {
@@ -37,6 +45,20 @@ export default function App() {
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
       {isSuccess && <PhotosGallery onSelect={() => {}} photos={data.photos} />}
+      {isSuccess && totalPages > 1 && (
+        <ReactPaginate
+          pageCount={totalPages}
+          pageRangeDisplayed={5}
+          marginPagesDisplayed={1}
+          onPageChange={({ selected }) => setPage(selected + 1)}
+          forcePage={page - 1}
+          containerClassName={css.pagination}
+          activeClassName={css.active}
+          disabledClassName={css.disabled}
+          nextLabel={<MdOutlineKeyboardArrowRight size={24} />}
+          previousLabel={<MdOutlineKeyboardArrowLeft size={24} />}
+        />
+      )}
     </>
   );
 }
